@@ -158,7 +158,9 @@ const add = (a,b) => {
     return a+b;
 } // this works, but also:
 
-const add = (a,b) => a+b; // also returns the expression, because it assumes you want to return it. // === ADVANCED FUNCTIONS === //
+const add = (a,b) => a+b; // also returns the expression, because it assumes you want to return it. 
+
+// === ADVANCED FUNCTIONS === //
 
 // old way
 function first() {
