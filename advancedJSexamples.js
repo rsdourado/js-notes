@@ -556,6 +556,8 @@ console.log(3);
 // 3
 // 2s later: 2
 
+
+
 // === PROMISES === //
 
 // bad way, callback pyramid of doom
@@ -654,5 +656,84 @@ Promise.all([promise, promise2, promise3, promise4])
       console.log(results[1]);
       console.log(results[2]);
   });
+
+
+
+  // === ASYNC AWAIT === // A new feature of ES8 that is built on top of Promise
+
+  // An ASYNC function is a function that returns a promise
+  // It makes code easier to read
+
+  movePlayer(100, 'Left')
+  .then(() => movePlayer(400, 'Left'))
+  .then(() => movePlayer(10, 'Right'))
+  .then(() => movePlayer(330, 'Left'));
+
+  // with ASYNC AWAIT it looks like this:
+
+  async function playerStart() {
+      await movePlayer(100, 'Left'); // pause
+      await movePlayer(400, 'Left'); // pause
+      await movePlayer(10, 'Right'); // pause
+      await movePlayer(330, 'Left'); // pause
+  }
+
+  // The goal of async await is to make the code more readable, to make it look asyncronous
+  // async await code are just promises underneath the hood
+
+  // the await keyword can only be used inside and async function
+  // await means: "pause this function until I have something for you", in other words, we are "waiting" for the response
+
+  // The await keyword can be used in front of any function that returns a promise
+  // Once the promise is resolved, the function moves to the next line
+
+  // one of the advantes is that this way it is possible to store the result of the promise in a variable
+
+  async function playerStart() {
+    const first = await movePlayer(100, 'Left'); // pause
+    const second = await movePlayer(400, 'Left'); // pause
+    await movePlayer(10, 'Right'); // pause
+    await movePlayer(330, 'Left'); // pause
+}
+
+// A more realistic example:
+
+fetch('https://jsonplaceholder.typicode.com/users')
+  .then(resp => resp.json())
+  .then(console.log);
+
+// could be written as:
+
+async function fetchUsers() {
+    const resp = await fetch('https://jsonplaceholder.typicode.com/users'); 
+    // the function is going to pause until it gets a response from fetch
+    const data = await resp.json();
+    console.log(data);
+}
+
+fetchUsers();
+
+// one more example:
+
+const urls = [
+    'https://jsonplaceholder.typicode.com/users',
+    'https://jsonplaceholder.typicode.com/posts',
+    'https://jsonplaceholder.typicode.com/albums',
+];
+
+const getData = async function() {
+    try {
+        const [ users, posts, albums ] = await Promise.all(urls.map(url => 
+            fetch(url).then(resp => resp.json())
+        ));
+        console.log('users', users);
+        console.log('posts', posts);
+        console.log('albums', albums);
+    } catch (err) {
+        console.log('oops', err);
+    }
+}
+
+getData();
 
 
