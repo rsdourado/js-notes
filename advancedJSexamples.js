@@ -555,3 +555,104 @@ console.log(3);
 // 1
 // 3
 // 2s later: 2
+
+// === PROMISES === //
+
+// bad way, callback pyramid of doom
+movePlayer(100, 'Left', function () { 
+    movePlayer(400, 'Left', function() {
+        movePlayer(10, 'Right', function() { 
+            movePlyer(330, 'Left', function(){
+            });
+        });
+    });
+});
+
+// with promises:
+
+movePlayer(100, 'Left')
+    .then(() => movePlayer(400, 'Left'))
+    .then(() => movePlayer(10, 'Right'))
+    .then(() => movePlayer(330, 'Left'));
+
+// how to create a promise:
+
+const promise = new Promise ((resolve, reject) => {
+    if (true) {
+        resolve('This thing works!');
+    } else {
+        reject('Error, it broke...');
+    }
+});
+
+// how to get the promise to run:
+
+promise.then(result => console.log(result)); //returns: This thing works! // "result" is just a variable name, it could be anything.
+
+// it is possible to chain multiple 'then' functions
+
+promise
+  .then(result => result + '?')
+  .then(result2 => {
+      console.log(result2);
+  }); // logs: This thing works!?
+
+promise
+  .then(result => result + '?')
+  .then(result2 => {
+    throw Error
+    console.log(result2);
+})
+  .catch(() => console.log('errrror!')); // logs: errrror! // .catch catches any error that happens in the 'then' functions.
+
+promise
+    .then(result => result + '?')
+    .then(result2 => result2 + '!?')
+    .catch(() => console.log('errrror!'))
+    .then(result3 => {
+        console.log(result3);
+}); // logs: This thing works!?!? // 'catch' only runs if something fails before it
+
+const promise = new Promise ((resolve, reject) => {
+    if (true) {
+        resolve('This thing works!');
+    } else {
+        reject('Error, it broke...');
+    }
+});
+
+const promise2 = new Promise((resolve, reject) => {
+    setTimeout(resolve, 100, "Hi!"); // settimout allows a code to run after a few miliseconds
+});
+
+const promise3 = new Promise((resolve, reject) => {
+    setTimeout(resolve, 1000, "Helllooooooooo!"); // settimout allows a code to run after a few miliseconds
+});
+
+const promise4 = new Promise((resolve, reject) => {
+    setTimeout(resolve, 3000, "La La La ..."); // settimout allows a code to run after a few miliseconds
+});
+
+Promise.all([promise, promise2, promise3, promise4])
+  .then(values => {
+      console.log(values);
+  }); // after 3s logs: ["This thing works!", "Hi!", "Helllooooooooo!", "La La La ..."]
+  // the time starts counting from the moment the const is assigned.
+
+  // a real world application:
+
+  const urls = [
+      'https://jsonplaceholder.typicode.com/users',
+      'https://jsonplaceholder.typicode.com/posts',
+      'https://jsonplaceholder.typicode.com/albums',
+  ];
+
+  Promise.all(urls.map(url => {
+      return fetch(url).then(resp => resp.json())
+  })).then(results => {
+      console.log(results[0]);
+      console.log(results[1]);
+      console.log(results[2]);
+  });
+
+
