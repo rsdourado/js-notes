@@ -737,3 +737,118 @@ const getData = async function() {
 getData();
 
 
+
+// === ES9 === //
+
+ // Object spread operator
+
+ const animals = {
+  tiger: 23,
+  lion: 5,
+  monkey: 2
+}
+
+const { tiger, ...rest } = animals;
+
+ // tiger is 23
+ // lion and monkey are not defined
+ // rest is { lion: 5, monkey: 2 }
+
+ // Since EC6 it was possible to do array spread operator, as such:
+
+const array = [1,2,3,4,5];
+
+const sum = (a,b,c,d,e) => a+b+c+d+e;
+
+sum(...array); // 15
+
+// since EC9 it is also possible 
+
+const animals = {
+  tiger: 23,
+  lion: 5,
+  monkey: 2,
+  bird: 40
+}
+
+const { tiger, lion, ...rest } = animals;
+
+const objectSpread = (p1, p2, p3) => {
+  console.log(p1);
+  console.log(p2);
+  console.log(p3);
+}
+
+objectSpread(tiger, lion, rest);
+
+// 23
+// 5
+// {monkey: 2, bird: 40}
+
+
+
+// ES9 - ASYNC //
+
+// finally // it allows us to do something once a promise has finished, either it resolves or rejects
+
+const urls = [
+  'https://jsonplaceholder.typicode.com/users',
+  'https://jsonplaceholder.typicode.com/posts',
+  'https://jsonplaceholder.typicode.com/albums',
+];
+
+Promise.all(urls.map(url => {
+  return fetch(url).then(resp => resp.json())
+}))
+  .then(results => {
+  console.log(results[0]);
+  console.log(results[1]);
+  console.log(results[2]);
+})
+  .catch(err => console.log('oops!', err))
+  .finally(data => console.log("extra", data));
+
+
+
+// for await of // allows to loop through an async await 
+
+const urls = [
+    'https://jsonplaceholder.typicode.com/users',
+    'https://jsonplaceholder.typicode.com/posts',
+    'https://jsonplaceholder.typicode.com/albums',
+];
+
+const getData = async function() {
+    try {
+        const [ users, posts, albums ] = await Promise.all(urls.map(async (url) => {
+          const response = await fetch(url);
+          return response.json();
+        }));
+        console.log('users', users);
+        console.log('posts', posts);
+        console.log('albums', albums);
+    } catch (err) {
+        console.log('oops', err);
+    }
+}
+
+// just a reminder of what a "for of loop" looks like
+const loopTrhoughUrls = url => {
+  for (url of urls) {
+    console.log(url);
+  }
+}
+
+// and now, a re-write of the getData function:
+
+const getData2 = async function() {
+  
+  const arrayOfPromises = urls.map(url => fetch(url));
+
+  for await (let request of arrayOfPromises) {
+    const data = await request.json();
+    console.log(data);
+  }
+}
+
+// the for await allows us to loop through multiple promises asyncronosly 
